@@ -32,7 +32,7 @@
 //#define TAMA_DEBUG
 #define TAMA_CLOCK_RATE 32768
 #define TAMA_SAMPLE_RATE TAMA_CLOCK_RATE
-#define TAMA_FRAME_RATE 60
+#define TAMA_FRAME_RATE 64
 #define TAMA_LCD_FPS TAMA_FRAME_RATE
 #define TAMA_CLOCKS_PER_FRAME (TAMA_CLOCK_RATE / TAMA_FRAME_RATE)
 #define TAMA_LCD_WIDTH LCD_WIDTH
@@ -331,7 +331,7 @@ static void emulate_next_frame(bool *fast_forward_ptr, u64_t *total_fast_forward
     if (*fast_forward_ptr) {
         uint64_t target_fast_forward_clocks = (GW_GetCurrentMillis() - *state->save_time) * TAMA_CLOCK_RATE / 1000;
         if (*total_fast_forward_clocks_ptr < target_fast_forward_clocks) {
-            uint64_t delta = MIN(target_fast_forward_clocks - *total_fast_forward_clocks_ptr, TAMA_CLOCKS_PER_FRAME * TAMA_FRAME_RATE * 50); // This gives around 300 x speed
+            uint64_t delta = MIN(target_fast_forward_clocks - *total_fast_forward_clocks_ptr, TAMA_CLOCKS_PER_FRAME * TAMA_FRAME_RATE * 50); // This gives around 320 x speed
             if (delta > TAMA_CLOCKS_PER_FRAME) {
                 *total_fast_forward_clocks_ptr += delta;
                 target = *state->tick_counter + delta;

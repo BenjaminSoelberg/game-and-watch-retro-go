@@ -270,20 +270,28 @@ void lcd_set_dithering(uint32_t enable) {
 void lcd_set_refresh_rate(uint32_t frequency) {
   // All values have been chosen to ensure:
   // * The fraction is centered to allow for the multisync PID to change it at runtime
-  // * The frequency between the 0 and 8191 fraction was sufficient to allow for a +-4% tolerance
+  // * The frequency between the 0 and 8191 fraction was sufficient to allow for about  +-4% tolerance
   // * Even the worst PLL error in the sound frequency would still be within this tolerance
   // * The universe is fine-tuned
 
   // Target clock can be calculated using (hltdc.Init.TotalWidth + 1) * (hltdc.Init.TotalHeight + 1) * RefreshRate
 
-  uint32_t plln, pllr;
-  if (frequency == 60) {
-    // 6 MHz pixel clock (real target is 6,036,480 Hz)
+  uint32_t pllm, plln, pllr;
+  if (frequency == 64) {
+    // 6.4 MHz pixel clock (real target is 393 * 256 * 64 = 6,438,912 Hz)
+    pllm = 4;
+    plln = 16;
+    pllr = 41;
+  }
+  else if (frequency == 60) {
+    // 6 MHz pixel clock (real target is 393 * 256 * 60 = 6,036,480 Hz)
+    pllm = 4;
     plln = 10;
     pllr = 28;
   }
   else if (frequency == 50) {
-    // 5 MHz pixel clock (real target is 5,030,400 Hz)
+    // 5 MHz pixel clock (real target is 393 * 256 * 50 = 5,030,400 Hz)
+    pllm = 4;
     plln = 12;
     pllr = 40;
   } else {
@@ -298,7 +306,7 @@ void lcd_set_refresh_rate(uint32_t frequency) {
 
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_LTDC;
 
-  PeriphClkInitStruct.PLL3.PLL3M = 4;
+  PeriphClkInitStruct.PLL3.PLL3M = pllm;
   PeriphClkInitStruct.PLL3.PLL3N = plln;
   PeriphClkInitStruct.PLL3.PLL3P = 2;
   PeriphClkInitStruct.PLL3.PLL3Q = 2;
